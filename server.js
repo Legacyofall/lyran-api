@@ -1,7 +1,12 @@
-// server.js — Lyran API (CommonJS) med Postgres (Supabase)
+// server.js — Lyran API (CommonJS) med Postgres (Supabase) + IPv4-first fix
 const express = require("express");
 const cors = require("cors");
 const { Pool } = require("pg");
+
+// Tvinga IPv4 först (fix för ENETUNREACH/IPv6)
+const dns = require("dns");
+try { dns.setDefaultResultOrder("ipv4first"); } catch (_) {}
+
 
 // ---- Konfiguration ----
 const PORT = process.env.PORT || 3000;
