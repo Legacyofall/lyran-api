@@ -51,14 +51,15 @@ function computeTimes(resource_type, date, start_hhmm, slots) {
 
 // ---- Routes ----
 
-// Health: visar även DB-status tydligt
+// Health: visar även DB-status + ev. felorsak
 app.get("/api/health", async (_req, res) => {
   const env_has_db_url = !!DATABASE_URL;
   const db_pool_created = !!pool;
   let db_connected = false;
+  let db_error = null;
   if (db_pool_created) {
     try { await pool.query("select 1"); db_connected = true; }
-    catch (e) { console.error("DB test failed:", e.message); }
+    catch (e) { db_error = e.message; console.error("DB test failed:", e); }
   }
   res.json({
     ok: true,
@@ -66,7 +67,8 @@ app.get("/api/health", async (_req, res) => {
     swish_number: SWISH_NUMBER,
     env_has_db_url,
     db_pool_created,
-    db_connected
+    db_connected,
+    db_error
   });
 });
 
